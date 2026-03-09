@@ -1,5 +1,5 @@
 ﻿using System;
-using System.ComponentModel;
+using DungeonCrawler.Systems;
 
 namespace DungeonCrawler.Characters
 {
@@ -12,8 +12,12 @@ namespace DungeonCrawler.Characters
         protected int defense;
         protected int level;
 
+        // Public properties to access character attributes
         public string Name => name;
         public int AttackPower => attackPower;
+        public int Defense => defense;
+        public int CurrentHealth => currentHealth;
+        public int MaxHealth => maxHealth;
 
         // Constructor
         public Character(string name, int maxHealth, int attackPower,int defense)
@@ -46,10 +50,28 @@ namespace DungeonCrawler.Characters
             return currentHealth > 0;
         }
 
-        // Method to attack another character
-        public void Attack(Character target)
+        // Virtual method to attack another character (can be overridden by subclasses)
+        public virtual void Attack(Character target)
         {
-            target.TakeDamage(attackPower);
+            int damage = attackPower - target.Defense;
+
+            // Ensure that damage is at least 1
+            if (damage < 1)
+            {
+                damage = 1;
+            }
+            target.TakeDamage(damage);
+        }
+
+        // Method to heal the character
+        public void Heal(int amount)
+        {
+            currentHealth += amount;
+            // Prevent health from exceeding max health
+            if (currentHealth > maxHealth)
+            {
+                currentHealth = maxHealth;
+            }
         }
     }
 }
